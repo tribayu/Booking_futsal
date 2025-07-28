@@ -2,63 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class BookingController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan daftar booking user login.
      */
     public function index()
     {
-        //
+        // Ambil semua booking milik user login
+        $bookings = Auth::user()->bookings;
+
+        return view('bookings.index', compact('bookings'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Tampilkan form untuk membuat booking baru.
      */
     public function create()
     {
-        //
+        return view('bookings.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Simpan booking baru ke database.
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'lapangan'   => 'required|string',
+            'tanggal'    => 'required|date',
+            'jam_mulai'  => 'required',
+            'jam_selesai'=> 'required|after:jam_mulai',
+        ]);
+
+        // Gunakan Auth Facade agar Intelephense ngerti
+        Auth::user()->bookings()->create($validated);
+
+        return redirect()->route('bookings.index')->with('success', 'Booking berhasil diajukan.');
     }
 
     /**
-     * Display the specified resource.
+     * Hapus booking.
      */
-    public function show(string $id)
+    public function destroy(Booking $booking)
     {
-        //
-    }
+        // Pastikan hanya user pemilik yang bisa hapus
+        if ($booking->user_id !== Auth::id()) {
+            abort(403);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        $booking->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('bookings.index')->with('success', 'Booking dihapus.');
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-use App\Models\Booking; 
+use App\Models\Booking;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -48,7 +48,7 @@ class User extends Authenticatable
     }
     public function bookings()
 {
-    return $this->hasMany(Booking::class);
+    return $this->hasMany(\App\Models\Booking::class);
 }
 
 }

@@ -13,9 +13,11 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
- Route::middleware(['auth'])->group(function () {
- Route::resource('bookings', BookingController::class);
+Route::middleware(['auth'])->group(function () {
+    Route::resource('bookings', BookingController::class);
 });
+
+
 
 
 require __DIR__.'/auth.php';

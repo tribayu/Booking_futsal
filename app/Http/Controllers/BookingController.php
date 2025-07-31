@@ -41,6 +41,7 @@ class BookingController extends Controller
         ]);
 
         // Gunakan Auth Facade agar Intelephense ngerti
+        $user = Auth::user();
         Auth::user()->bookings()->create($validated);
 
         return redirect()->route('bookings.index')->with('success', 'Booking berhasil diajukan.');

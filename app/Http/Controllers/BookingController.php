@@ -31,21 +31,20 @@ class BookingController extends Controller
     /**
      * Simpan booking baru ke database.
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'lapangan'   => 'required|string',
-            'tanggal'    => 'required|date',
-            'jam_mulai'  => 'required',
-            'jam_selesai'=> 'required|after:jam_mulai',
-        ]);
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'lapangan'   => 'required|string',
+        'tanggal'    => 'required|date',
+        'jam_mulai'  => 'required',
+        'jam_selesai'=> 'required|after:jam_mulai',
+    ]);
 
-        // Gunakan Auth Facade agar Intelephense ngerti
-        $user = Auth::user();
-        Auth::user()->bookings()->create($validated);
+    // Menggunakan relasi bookings dari user yang login
+    $request->user()->bookings()->create($validated);
 
-        return redirect()->route('bookings.index')->with('success', 'Booking berhasil diajukan.');
-    }
+    return redirect()->route('bookings.index')->with('success', 'Booking berhasil diajukan.');
+}
 
     /**
      * Hapus booking.
